@@ -9,6 +9,8 @@ function App() {
   const [input, setInput] = useState("");
   const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null);
   const [selectedLanguage, setSelectedLanguage] = useState("");
+  const [formattedPhone, setFormattedPhone] = useState("");
+  const [errorMessage, setErrorMessage] = useState<any>("");
 
   useEffect(() => {
     if (!input || !selectedLanguage) return;
@@ -19,17 +21,30 @@ function App() {
         phoneUtil.parse(selectedLanguage + input),
         PhoneNumberFormat.E164
       );
-      console.log("phone: ", phone);
-    } catch (error) {}
+      setFormattedPhone(phone);
+      setErrorMessage("");
+    } catch (error) {
+      console.error(error);
+      setErrorMessage(String(error));
+    }
   }, [input, selectedLanguage]);
 
   return (
-    <Box sx={{ width: "400px" }}>
+    <Box
+      sx={{
+        display: "flex",
+        fontSize: "20px",
+        flexDirection: "column",
+        rowGap: "10px",
+      }}
+    >
       <TextField
         ref={ref}
-        fullWidth
         value={input}
         onChange={(e) => setInput(e.target.value)}
+        sx={{
+          width: "400px",
+        }}
         InputProps={{
           startAdornment: (
             <Box
@@ -56,6 +71,8 @@ function App() {
           ),
         }}
       />
+      <Box>formatted phone: {formattedPhone}</Box>
+      <Box>error message: {errorMessage}</Box>
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
